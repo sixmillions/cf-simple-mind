@@ -34,7 +34,7 @@ app.get("/history", async (c) => {
 app.post("/history", async (c) => {
   try {
     const body = await c.req.json();
-    const { id, title, executionTime, status } = body;
+    const { id, title, executionTime, status, trigger } = body;
 
     // Validate required fields
     if (!id || !title || !executionTime || !status) {
@@ -51,20 +51,24 @@ app.post("/history", async (c) => {
       history = JSON.parse(existingHistory);
     }
 
+    // 将状态标准化为 success 或 fail
+    const normalizedStatus = status === "success" ? "success" : "fail";
+
     // Create new history record
     const newRecord = {
       id,
       title,
       executionTime,
-      status
+      status: normalizedStatus,
+      trigger
     };
 
     // Add to history list
     history.his_list.unshift(newRecord);
 
-    // Keep only the last 10 records
-    if (history.his_list.length > 10) {
-      history.his_list = history.his_list.slice(0, 10);
+    // Keep only the last 20 records
+    if (history.his_list.length > 20) {
+      history.his_list = history.his_list.slice(0, 20);
     }
 
     // Save to KV

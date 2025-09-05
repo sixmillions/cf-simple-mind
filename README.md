@@ -44,19 +44,19 @@
 
 ### content-left-bottom
 
-- 名称：Mind List
-- content-left-bottom 是一个 table 列表，展示数据库存储的 mind，列 Title/Description/Scheduled Time/Triggers/Actions
-- 调用接口是 GET /api/mind, 每一条有 Edit 和 Delete 按钮(Actions)，Description 最多 20 长度，超出...
-- edit 按钮调用 GET /api/mind/[id] 获取数据填入 content-left-top 的表单，表单按钮变为 Update Mind, 点击后调用 PUT /api/mind/[id] 更新 mind，
-- 点击 delete 接口，调用 Delete /api/mind/[id] 接口，删除 mind
-
-### content-right-top
-
 - 名称：Trigger Configuration
-- content-right-top 是一个多 tab 页，不同 tab 是不同的 trigger 配置，tab 页名字是配置名字，内容是 json
+- content-left-bottom 是一个多 tab 页，不同 tab 是不同的 trigger 配置，tab 页名字是配置名字，内容是 json
 - 第一个 tab 页是新增，Trigger Name 是配置名字，Configuration (JSON)输入框是配置内容
 - 输入框可以输入 trigger 的 json 配置文件，下面是两个按钮，一个提交，一个删除
 - 可以调用 GET /api/trigger 获取所有配置, 新增（修改）删除分别调用 POST 和 DELETE 的 /api/trigger 接口
+
+### content-right-top
+
+- 名称：Mind List
+- content-right-top 是一个 table 列表，展示数据库存储的 mind，列 Title/Description/Scheduled Time/Triggers/Actions
+- 调用接口是 GET /api/mind, 每一条有 Edit 和 Delete 按钮(Actions)，Description 最多 20 长度，超出...
+- edit 按钮调用 GET /api/mind/[id] 获取数据填入 content-left-top 的表单，表单按钮变为 Update Mind, 点击后调用 PUT /api/mind/[id] 更新 mind，
+- 点击 delete 接口，调用 Delete /api/mind/[id] 接口，删除 mind
 
 ### ontent-right-bottom
 

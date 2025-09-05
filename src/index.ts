@@ -44,9 +44,9 @@ async function recordHistory(
 
     history.his_list.unshift(historyRecord);
 
-    // 保持历史记录最多10条
-    if (history.his_list.length > 10) {
-      history.his_list = history.his_list.slice(0, 10);
+    // 保持历史记录最多20条
+    if (history.his_list.length > 20) {
+      history.his_list = history.his_list.slice(0, 20);
     }
 
     await env.subscribe_mind.put("history", JSON.stringify(history));
@@ -120,7 +120,7 @@ export default {
             if (!triggerConfig) {
               console.warn(`Trigger config not found for key: ${triggerKey}`);
               // 记录失败的历史记录
-              await recordHistory(env, typedMind, triggerKey, "failed_config");
+              await recordHistory(env, typedMind, triggerKey, "fail");
               continue;
             }
 
@@ -141,7 +141,7 @@ export default {
               } catch (emailError) {
                 console.error(`Failed to send email for mind ${typedMind.title}, trigger: ${triggerKey}:`, emailError);
                 // 记录失败的历史记录
-                await recordHistory(env, typedMind, triggerKey, "failed_execution");
+                await recordHistory(env, typedMind, triggerKey, "fail");
               }
             } else if (triggerConfig.type === "dingtalk") {
               try {
@@ -159,7 +159,7 @@ export default {
               } catch (dingtalkError) {
                 console.error(`Failed to send DingTalk message for mind ${typedMind.title}, trigger: ${triggerKey}:`, dingtalkError);
                 // 记录失败的历史记录
-                await recordHistory(env, typedMind, triggerKey, "failed_execution");
+                await recordHistory(env, typedMind, triggerKey, "fail");
               }
             }
           }

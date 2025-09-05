@@ -43,6 +43,6 @@ npm run cf-typegen
 *   **API:** The backend API is organized into modules within the `src/api/` directory. The main router is in `src/index.ts`.
 *   **Triggers:** Trigger logic (e.g., sending emails, DingTalk messages) is located in the `src/trigger/` directory.
 *   **Data Storage:** The application uses a single Cloudflare KV namespace with the binding `subscribe_mind`. Data is stored as JSON strings.
-*   **Frontend:** The user interface is a single HTML file (`public/index.html`) that makes API calls to the backend.
+*   **Frontend:** The user interface is a single HTML file (`public/index.html`) that makes API calls to the backend. The layout consists of a left panel for creating new minds and configuring triggers, and a right panel for listing existing minds and viewing recent executions.
 *   **Authentication:** A simple token-based authentication is used. The token is stored in the browser's local storage.
 *   **Scheduled Tasks:** A cron job is configured in `wrangler.jsonc` to run every hour (`"0 */1 * * *"`). The logic for the scheduled task is in the `scheduled` function in `src/index.ts`.

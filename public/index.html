@@ -52,7 +52,7 @@
 
     h2 {
       font-size: 1.25rem;
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
       font-weight: 600;
     }
 
@@ -85,11 +85,18 @@
     }
 
     .content-left, .content-right {
-      flex: 1;
       display: flex;
       flex-direction: column;
       gap: 2rem;
       min-width: 0; /* Prevent flexbox overflow */
+    }
+
+    .content-left {
+      flex: 2;
+    }
+
+    .content-right {
+      flex: 3;
     }
 
     .card {
@@ -339,6 +346,14 @@
       h2 { font-size: 1.1rem; }
     }
 
+    @media (max-height: 767px) {
+      .content {
+        flex-direction: column;
+        padding: 1rem;
+        gap: 1rem;
+      }
+    }
+
     @media (min-width: 769px) and (max-height: 959px) {
       .content {
         overflow-y: auto;
@@ -392,10 +407,24 @@
         </form>
       </div>
 
-      <!-- Left Bottom - Minds Table -->
+      <!-- Left Bottom - Trigger Configuration -->
+      <div class="card content-right-top">
+        <h2>Trigger Configuration</h2>
+        <div class="tabs" id="triggerTabs">
+          <!-- Tabs will be populated here -->
+        </div>
+        <div id="triggerTabContent">
+          <!-- Tab content will be populated here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Content -->
+    <div class="content-right">
+      <!-- Right Top - Mind List -->
       <div class="card content-left-bottom">
         <h2>Mind List</h2>
-        <div class="table-container">
+        <div class="table-container" style="height: 300px;">
           <table>
             <thead>
               <tr>
@@ -413,20 +442,6 @@
           </table>
         </div>
       </div>
-    </div>
-
-    <!-- Right Content -->
-    <div class="content-right">
-      <!-- Right Top - Trigger Configuration Tabs -->
-      <div class="card content-right-top">
-        <h2>Trigger Configuration</h2>
-        <div class="tabs" id="triggerTabs">
-          <!-- Tabs will be populated here -->
-        </div>
-        <div id="triggerTabContent">
-          <!-- Tab content will be populated here -->
-        </div>
-      </div>
 
       <!-- Right Bottom - Recent Executions -->
       <div class="card content-right-bottom">
@@ -437,12 +452,13 @@
             <button class="btn btn-danger" id="clearExecutionsBtn">Clear</button>
           </div>
         </div>
-        <div class="table-container">
+        <div class="table-container" style="height: 300px;">
           <table>
             <thead>
               <tr>
                 <th>Title</th>
                 <th>Execution Time</th>
+                <th>Trigger</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -1020,6 +1036,7 @@
         row.innerHTML = `
           <td>${execution.title}</td>
           <td>${new Date(execution.executionTime).toLocaleString()}</td>
+          <td>${execution.trigger || 'N/A'}</td>
           <td>${execution.status}</td>
         `;
         executionsTableBody.appendChild(row);
