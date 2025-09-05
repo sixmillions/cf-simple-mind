@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Mind</title>
+  <style>
+    :root {
+      --primary-color: #007bff;
+      --secondary-color: #6c757d;
+      --success-color: #28a745;
+      --danger-color: #dc3545;
+      --warning-color: #ffc107;
+      --info-color: #17a2b8;
+      --light-color: #f8f9fa;
+      --dark-color: #343a40;
+
+      --bg-color: #f8f9fa;
+      --text-color: #212529;
+      --header-bg: #fff;
+      --border-color: #dee2e6;
+      --table-header-bg: #f8f9fa;
+      --card-bg: #fff;
+      --input-bg: #fff;
+      --input-border-color: #ced4da;
+    }
+
+    body.dark-mode {
+      --bg-color: #121212;
+      --text-color: #e0e0e0;
+      --header-bg: #1e1e1e;
+      --border-color: #444;
+      --table-header-bg: #1e1e1e;
+      --card-bg: #1e1e1e;
+      --input-bg: #2c2c2c;
+      --input-border-color: #555;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.6;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    h2 {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    /* Layout */
+    .container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background-color: var(--header-bg);
+      border-bottom: 1px solid var(--border-color);
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .content {
+      display: flex;
+      flex: 1;
+      padding: 2rem;
+      gap: 2rem;
+      overflow-y: auto;
+    }
+
+    .content-left, .content-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      min-width: 0; /* Prevent flexbox overflow */
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .content-left-bottom, .content-right-bottom {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background-color: var(--header-bg);
+      border-top: 1px solid var(--border-color);
+      flex-shrink: 0;
+    }
+
+    /* Header */
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    
+    .header-controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    /* Forms */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    .form-group input[type="text"], 
+    .form-group input[type="datetime-local"], 
+    .form-group textarea {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--input-border-color);
+      border-radius: 6px;
+      background-color: var(--input-bg);
+      color: var(--text-color);
+      font-size: 1rem;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+    }
+
+    .trigger-checkboxes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .trigger-checkboxes label {
+      font-weight: normal;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: #fff;
+    }
+
+    .btn-danger {
+      background-color: var(--danger-color);
+      color: #fff;
+    }
+
+    .btn-success {
+      background-color: var(--success-color);
+      color: #fff;
+    }
+    
+    .btn-warning {
+        background-color: var(--warning-color);
+        color: #212529;
+    }
+
+    .theme-toggle {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Tables */
+    .table-container {
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    th {
+      background-color: var(--table-header-bg);
+      font-weight: 600;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .tab {
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      border: 1px solid transparent;
+      border-bottom: none;
+      border-radius: 4px 4px 0 0;
+      background-color: transparent;
+      color: var(--text-color);
+      margin-bottom: -1px;
+    }
+
+    .tab.active {
+      background-color: var(--card-bg);
+      border-color: var(--border-color) var(--border-color) var(--card-bg) var(--border-color);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .trigger-config {
+      width: 100%;
+      height: 150px;
+      padding: 0.5rem;
+      border: 1px solid var(--input-border-color);
+      border-radius: 6px;
+      font-family: monospace;
+      background-color: var(--input-bg);
+      color: var(--text-color);
+    }
+
+    .trigger-actions {
+      margin-top: 1rem;
+      display: flex;
+      gap: 1rem;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      position: relative;
+      background-color: var(--card-bg);
+      padding: 2rem;
+      width: 90%;
+      max-width: 400px;
+      border-radius: 8px;
+    }
+
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .modal input {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      margin: 1rem 0;
+      border: 1px solid var(--input-border-color);
+      border-radius: 6px;
+      background-color: var(--input-bg);
+      color: var(--text-color);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .content { 
+        flex-direction: column; 
+        padding: 1rem;
+        gap: 1rem;
+      }
+      header { padding: 1rem; }
+      .card { padding: 1rem; }
+      h2 { font-size: 1.1rem; }
+    }
+
+    @media (min-width: 769px) and (max-height: 959px) {
+      .content {
+        overflow-y: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="logo">Mind</div>
+    <div class="header-controls">
+      <a href="/swagger.html" target="_blank" class="btn">Swagger</a>
+      <button class="theme-toggle" id="themeToggle">🌞</button>
+      <button class="btn btn-primary" id="loginBtn">Login</button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="content">
+    <!-- Left Content -->
+    <div class="content-left">
+      <!-- Left Top - Form -->
+      <div class="card content-left-top">
+        <h2>Create New Mind</h2>
+        <form id="mindForm">
+          <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" id="title" required>
+          </div>
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="time">Scheduled Time</label>
+            <input type="datetime-local" id="time" required>
+          </div>
+          <div class="form-group">
+            <label>Trigger</label>
+            <div class="trigger-checkboxes" id="triggerCheckboxes">
+              <!-- Trigger checkboxes will be populated here -->
+            </div>
+          </div>
+          <div class="form-group">
+            <label>
+              <input type="checkbox" id="enabled" checked> Enable
+            </label>
+          </div>
+          <button type="submit" class="btn btn-success" id="createMindBtn">Create Mind</button>
+        </form>
+      </div>
+
+      <!-- Left Bottom - Minds Table -->
+      <div class="card content-left-bottom">
+        <h2>Mind List</h2>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Scheduled Time</th>
+                <th>Triggers</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="mindsTableBody">
+              <!-- Minds will be populated here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Content -->
+    <div class="content-right">
+      <!-- Right Top - Trigger Configuration Tabs -->
+      <div class="card content-right-top">
+        <h2>Trigger Configuration</h2>
+        <div class="tabs" id="triggerTabs">
+          <!-- Tabs will be populated here -->
+        </div>
+        <div id="triggerTabContent">
+          <!-- Tab content will be populated here -->
+        </div>
+      </div>
+
+      <!-- Right Bottom - Recent Executions -->
+      <div class="card content-right-bottom">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h2>Recent Executions</h2>
+          <div>
+            <button class="btn btn-primary" id="refreshExecutionsBtn" style="margin-right: 0.5rem;">Refresh</button>
+            <button class="btn btn-danger" id="clearExecutionsBtn">Clear</button>
+          </div>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Execution Time</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="executionsTableBody">
+              <!-- Executions will be populated here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <a href="https://www.sixmillions.cn" id="six">Contact Me</a>
+  </footer>
+
+  <!-- Login Modal -->
+  <div class="modal" id="loginModal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Login</h2>
+      <input type="password" id="tokenInput" placeholder="Enter token">
+      <button id="confirmLoginBtn" class="btn btn-primary">Confirm</button>
+    </div>
+  </div>
+
+  <script>
+    // DOM Elements
+    const loginBtn = document.getElementById('loginBtn');
+    const loginModal = document.getElementById('loginModal');
+    const closeBtn = document.querySelector('.close');
+    const tokenInput = document.getElementById('tokenInput');
+    const confirmLoginBtn = document.getElementById('confirmLoginBtn');
+    const mindForm = document.getElementById('mindForm');
+    const mindsTableBody = document.getElementById('mindsTableBody');
+    const triggerCheckboxes = document.getElementById('triggerCheckboxes');
+    const triggerTabs = document.getElementById('triggerTabs');
+    const triggerTabContent = document.getElementById('triggerTabContent');
+    const executionsTableBody = document.getElementById('executionsTableBody');
+    const themeToggle = document.getElementById('themeToggle');
+    const refreshExecutionsBtn = document.getElementById('refreshExecutionsBtn');
+    const clearExecutionsBtn = document.getElementById('clearExecutionsBtn');
+
+    // State
+    let authToken = localStorage.getItem('authToken');
+    let currentEditingId = null;
+    let triggers = {};
+    let isDarkMode = localStorage.getItem('darkMode') === 'true';
+
+    // Initialize the app
+    function init() {
+      updateLoginButton();
+      updateThemeToggle();
+      if (isDarkMode) {
+        document.body.classList.add('dark-mode');
+      }
+      if (authToken) {
+        loadMinds();
+        loadTriggers();
+        loadExecutions();
+      }
+    }
+    
+    // Update theme toggle button icon
+    function updateThemeToggle() {
+      themeToggle.textContent = isDarkMode ? '🌙' : '🌞';
+    }
+    
+    // Toggle dark mode
+    function toggleDarkMode() {
+      isDarkMode = !isDarkMode;
+      localStorage.setItem('darkMode', isDarkMode);
+      document.body.classList.toggle('dark-mode');
+      updateThemeToggle();
+    }
+
+    // Update login button based on auth status
+    function updateLoginButton() {
+      if (authToken) {
+        loginBtn.textContent = 'Logout';
+        loginBtn.classList.remove('login-btn');
+        loginBtn.classList.add('logout-btn');
+      } else {
+        loginBtn.textContent = 'Login';
+        loginBtn.classList.remove('logout-btn');
+        loginBtn.classList.add('login-btn');
+      }
+    }
+
+    // Show login modal
+    function showLoginModal() {
+      loginModal.style.display = 'block';
+    }
+
+    // Hide login modal
+    function hideLoginModal() {
+      loginModal.style.display = 'none';
+    }
+
+    // Handle login
+    function handleLogin() {
+      const token = tokenInput.value.trim();
+      if (token) {
+        // In a real app, you would validate the token with the API
+        // For now, we'll just store it
+        authToken = token;
+        localStorage.setItem('authToken', token);
+        updateLoginButton();
+        hideLoginModal();
+        tokenInput.value = '';
+        
+        // Load data after login
+        loadMinds();
+        loadTriggers();
+        loadExecutions();
+      }
+    }
+
+    // Handle logout
+    function handleLogout() {
+      authToken = null;
+      localStorage.removeItem('authToken');
+      updateLoginButton();
+      
+      // Clear data
+      mindsTableBody.innerHTML = '';
+      triggerCheckboxes.innerHTML = '';
+      triggerTabs.innerHTML = '';
+      triggerTabContent.innerHTML = '';
+      executionsTableBody.innerHTML = '';
+    }
+
+    // Load minds from API
+    async function loadMinds() {
+      if (!authToken) return;
+      
+      try {
+        const response = await fetch('/api/mind', {
+          headers: {
+            'Authorization': `Bearer ${authToken}`
+          }
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            renderMinds(result.data);
+          } else {
+            alert(`Error loading minds: ${result.error}`);
+          }
+        } else {
+          alert(`Error loading minds: ${response.statusText}`);
+        }
+      } catch (error) {
+        console.error('Error loading minds:', error);
+        alert('Error loading minds. See console for details.');
+      }
+    }
+
+    // Render minds in table
+    function renderMinds(minds) {
+      mindsTableBody.innerHTML = '';
+      
+      Object.values(minds).forEach(mind => {
+        // Format trigger information
+        let triggerInfo = 'N/A';
+        if (mind.trigger && Array.isArray(mind.trigger) && mind.trigger.length > 0) {
+          triggerInfo = mind.trigger.join('/');
+        }
+        
+        const description = mind.description || '';
+        const truncatedDescription = description.length > 20 ? description.substring(0, 20) + '...' : description;
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${mind.title}</td>
+          <td title="${description}">${truncatedDescription}</td>
+          <td>${new Date(mind.time).toLocaleString()}</td>
+          <td>${triggerInfo}</td>
+          <td>${mind.enabled ? 'Enabled' : 'Disabled'}</td>
+          <td>
+            <button class="btn btn-primary action-btn edit-btn" data-id="${mind.id}">Edit</button>
+            <button class="btn btn-danger action-btn delete-btn" data-id="${mind.id}">Delete</button>
+          </td>
+        `;
+        mindsTableBody.appendChild(row);
+      });
+      
+      // Add event listeners to action buttons
+      document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => editMind(e.target.dataset.id));
+      });
+      
+      document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => deleteMind(e.target.dataset.id));
+      });
+    }
+
+    // Edit mind
+    async function editMind(id) {
+      if (!authToken) return;
+      
+      try {
+        const response = await fetch(`/api/mind/${id}`, {
+          headers: {
+            'Authorization': `Bearer ${authToken}`
+          }
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            const mind = result.data;
+            document.getElementById('title').value = mind.title;
+            document.getElementById('description').value = mind.description || '';
+            document.getElementById('time').value = mind.time;
+            document.getElementById('enabled').checked = mind.enabled;
+            
+            // Check triggers
+            document.querySelectorAll('.trigger-checkboxes input').forEach(checkbox => {
+              checkbox.checked = mind.trigger.includes(checkbox.value);
+            });
+            
+            currentEditingId = id;
+            document.getElementById('createMindBtn').textContent = 'Update Mind';
+            document.getElementById('createMindBtn').classList.remove('create-btn');
+            document.getElementById('createMindBtn').classList.add('update-btn');
+          } else {
+            alert(`Error loading mind: ${result.error}`);
+          }
+        } else {
+          alert(`Error loading mind: ${response.statusText}`);
+        }
+      } catch (error) {
+        console.error('Error loading mind for edit:', error);
+        alert('Error loading mind for edit. See console for details.');
+      }
+    }
+
+    // Delete mind
+    async function deleteMind(id) {
+      if (!authToken || !confirm('Are you sure you want to delete this mind?')) return;
+      
+      try {
+        const response = await fetch(`/api/mind/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${authToken}`
+          }
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            alert('Mind deleted successfully');
+            loadMinds(); // Reload minds
+          } else {
+            alert(`Error deleting mind: ${result.error}`);
+          }
+        } else {
+          alert(`Error deleting mind: ${response.statusText}`);
+        }
+      } catch (error) {
+        console.error('Error deleting mind:', error);
+        alert('Error deleting mind. See console for details.');
+      }
+    }
+
+    // Load triggers from API
+    async function loadTriggers() {
+      if (!authToken) return;
+      
+      try {
+        const response = await fetch('/api/trigger', {
+          headers: {
+            'Authorization': `Bearer ${authToken}`
+          }
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            triggers = result.data;
+            renderTriggerCheckboxes();
+            renderTriggerTabs();
+          } else {
+            alert(`Error loading triggers: ${result.error}`);
+          }
+        } else {
+          alert(`Error loading triggers: ${response.statusText}`);
+        }
+      } catch (error) {
+        console.error('Error loading triggers:', error);
+        alert('Error loading triggers. See console for details.');
+      }
+    }
+
+    // Render trigger checkboxes
+    function renderTriggerCheckboxes() {
+      triggerCheckboxes.innerHTML = '';
+      
+      Object.keys(triggers).forEach(key => {
+        const label = document.createElement('label');
+        label.innerHTML = `
+          <input type="checkbox" value="${key}"> ${key}
+        `;
+        triggerCheckboxes.appendChild(label);
+      });
+    }
+
+    // Render trigger tabs
+    function renderTriggerTabs() {
+      triggerTabs.innerHTML = '';
+      triggerTabContent.innerHTML = '';
+      
+      // Add "Add New" tab
+      const addTab = document.createElement('div');
+      addTab.className = 'tab';
+      addTab.textContent = '+ Add New';
+      addTab.dataset.tab = 'add-new';
+      triggerTabs.appendChild(addTab);
+      
+      // Add content for "Add New" tab
+      const addContent = document.createElement('div');
+      addContent.className = 'tab-content';
+      addContent.dataset.tab = 'add-new';
+      addContent.innerHTML = `
+        <div class="form-group">
+          <label for="new-trigger-key">Trigger Name</label>
+          <input type="text" id="new-trigger-key" placeholder="Enter trigger name">
+        </div>
+        <div class="form-group">
+          <label for="new-trigger-config">Configuration (JSON)</label>
+          <textarea class="trigger-config" id="new-trigger-config" placeholder='{
+  "example": "value"
+}'></textarea>
+        </div>
+        <button class="btn btn-success" id="add-trigger-btn">Add Trigger</button>
+      `;
+      triggerTabContent.appendChild(addContent);
+      
+      Object.keys(triggers).forEach((key, index) => {
+        // Create tab
+        const tab = document.createElement('div');
+        tab.className = 'tab';
+        tab.textContent = key;
+        tab.dataset.tab = key;
+        triggerTabs.appendChild(tab);
+        
+        // Create tab content
+        const content = document.createElement('div');
+        content.className = 'tab-content';
+        content.dataset.tab = key;
+        content.innerHTML = `
+          <textarea class="trigger-config" id="config-${key}">${JSON.stringify(triggers[key], null, 2)}</textarea>
+          <div class="trigger-actions">
+            <button class="btn btn-success submit-btn" data-key="${key}">Submit</button>
+            <button class="btn btn-danger delete-trigger-btn" data-key="${key}">Delete</button>
+          </div>
+        `;
+        triggerTabContent.appendChild(content);
+      });
+      
+      // Add event listeners to tabs
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          // Remove active class from all tabs and content
+          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+          
+          // Add active class to clicked tab and corresponding content
+          tab.classList.add('active');
+          document.querySelector(`.tab-content[data-tab="${tab.dataset.tab}"]`).classList.add('active');
+        });
+      });
+      
+      // Add event listener for add trigger button
+      document.getElementById('add-trigger-btn').addEventListener('click', addNewTrigger);
+      
+      // Add event listeners to submit buttons
+      document.querySelectorAll('.submit-btn[data-key]').forEach(btn => {
+        btn.addEventListener('click', (e) => updateTrigger(e.target.dataset.key));
+      });
+      
+      // Add event listeners to delete buttons
+      document.querySelectorAll('.delete-trigger-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => deleteTrigger(e.target.dataset.key));
+      });
+    }
+
+    // Update trigger
+    async function updateTrigger(key) {
+      if (!authToken) return;
+      
+      const configTextarea = document.getElementById(`config-${key}`);
+      let config;
+      
+      try {
+        config = JSON.parse(configTextarea.value);
+      } catch (error) {
+        alert('Invalid JSON format');
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/trigger', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ key, config })
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            alert('Trigger updated successfully');
+            loadTriggers(); // Reload triggers
+          } else {
+            alert(`Error updating trigger: ${result.error}`);
+          }
+        } else {
+          alert(`Error updating trigger: ${response.statusText}`);
+        }
+      } catch (error) {
+        console.error('Error updating trigger:', error);
+        alert('Error updating trigger. See console for details.');
+      }
+    }
+    
+    // Add new trigger
+    async function addNewTrigger() {
+      if (!authToken) return;
+      
+      const key = document.getElementById('new-trigger-key').value.trim();
+      const configTextarea = document.getElementById('new-trigger-config');
+      let config;
+      
+      if (!key) {
+        alert('Please enter a trigger name');
+        return;
+      }
+      
+      try {
+        config = JSON.parse(configTextarea.value);
+      } catch (error) {
+        alert('Invalid JSON format');
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/trigger', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ key, config })
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            alert('Trigger added successfully');
+            document.getElementById('new-trigger-key').value = '';
+            configTextarea.value = '';
+            loadTriggers(); // Reload triggers
+          } else {
+            alert(`Error adding trigger: ${result.error}`);
+          }
+        } else {
+          alert(`Error adding trigger: ${response.statusText}`);
+        }
+      } catch (error) {
+        console.error('Error adding trigger:', error);
+        alert('Error adding trigger. See console for details.');
+      }
+    }
+
+    // Delete trigger
+    async function deleteTrigger(key) {
+      if (!authToken || !confirm('Are you sure you want to delete this trigger?')) return;
+      
+      try {
+        const response = await fetch(`/api/trigger/${key}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${authToken}`
+          }
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            alert('Trigger deleted successfully');
+            loadTriggers(); // Reload triggers
+          } else {
+            alert(`Error deleting trigger: ${result.error}`);
+          }
+        } else {
+          alert(`Error deleting trigger: ${response.statusText}`);
+        }
+      } catch (error) {
+        console.error('Error deleting trigger:', error);
+        alert('Error deleting trigger. See console for details.');
+      }
+    }
+
+    // Load executions from API
+    async function loadExecutions() {
+      if (!authToken) return;
+      
+      try {
+        const response = await fetch('/api/history', {
+          headers: {
+            'Authorization': `Bearer ${authToken}`
+          }
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            renderExecutions(result.data.his_list || []);
+          } else {
+            alert(`Error loading executions: ${result.error}`);
+          }
+        } else {
+          alert(`Error loading executions: ${response.statusText}`);
+        }
+      } catch (error) {
+        console.error('Error loading executions:', error);
+        alert('Error loading executions. See console for details.');
+        // Fallback to empty list
+        renderExecutions([]);
+      }
+    }
+    
+    // Clear all execution history
+    async function clearExecutions() {
+      if (!authToken || !confirm('确定要清空所有执行历史记录吗？')) return;
+      
+      try {
+        const response = await fetch('/api/history', {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${authToken}`
+          }
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            renderExecutions([]);
+            alert('执行历史记录已清空');
+          } else {
+            alert(`Error clearing executions: ${result.error}`);
+          }
+        } else {
+          alert(`Error clearing executions: ${response.statusText}`);
+        }
+      } catch (error) {
+        console.error('Error clearing executions:', error);
+        alert('清空执行历史记录失败');
+      }
+    }
+    
+    // Render executions in table
+    function renderExecutions(executions) {
+      executionsTableBody.innerHTML = '';
+      
+      executions.forEach(execution => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${execution.title}</td>
+          <td>${new Date(execution.executionTime).toLocaleString()}</td>
+          <td>${execution.status}</td>
+        `;
+        executionsTableBody.appendChild(row);
+      });
+    }
+
+    // Handle form submission
+    async function handleFormSubmit(e) {
+      e.preventDefault();
+      
+      if (!authToken) {
+        alert('Please login first');
+        return;
+      }
+      
+      const title = document.getElementById('title').value;
+      const description = document.getElementById('description').value;
+      const time = document.getElementById('time').value;
+      const enabled = document.getElementById('enabled').checked;
+      
+      // Get selected triggers
+      const selectedTriggers = [];
+      document.querySelectorAll('.trigger-checkboxes input:checked').forEach(checkbox => {
+        selectedTriggers.push(checkbox.value);
+      });
+      
+      const mindData = {
+        title,
+        description,
+        time,
+        trigger: selectedTriggers,
+        enabled
+      };
+      
+      try {
+        let response;
+        if (currentEditingId) {
+          // Update existing mind
+          response = await fetch(`/api/mind/${currentEditingId}`, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${authToken}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(mindData)
+          });
+        } else {
+          // Create new mind
+          response = await fetch('/api/mind', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${authToken}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(mindData)
+          });
+        }
+        
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            alert(`Mind ${currentEditingId ? 'updated' : 'created'} successfully`);
+            // Reset form
+            mindForm.reset();
+            document.getElementById('enabled').checked = true;
+            currentEditingId = null;
+            document.getElementById('createMindBtn').textContent = 'Create Mind';
+            document.getElementById('createMindBtn').classList.remove('update-btn');
+            document.getElementById('createMindBtn').classList.add('create-btn');
+            
+            // Reload minds
+            loadMinds();
+          } else {
+            alert(`Error saving mind: ${result.error}`);
+          }
+        } else {
+          alert(`Error saving mind: ${response.statusText}`);
+        }
+      } catch (error) {
+        console.error('Error saving mind:', error);
+        alert('Error saving mind. See console for details.');
+      }
+    }
+
+    // Event Listeners
+    loginBtn.addEventListener('click', () => {
+      if (authToken) {
+        handleLogout();
+      } else {
+        showLoginModal();
+      }
+    });
+
+    themeToggle.addEventListener('click', toggleDarkMode);
+
+    closeBtn.addEventListener('click', hideLoginModal);
+
+    window.addEventListener('click', (e) => {
+      if (e.target === loginModal) {
+        hideLoginModal();
+      }
+    });
+
+    confirmLoginBtn.addEventListener('click', handleLogin);
+
+    mindForm.addEventListener('submit', handleFormSubmit);
+    
+    // Add event listeners for execution buttons
+    refreshExecutionsBtn.addEventListener('click', loadExecutions);
+    clearExecutionsBtn.addEventListener('click', clearExecutions);
+
+    // Initialize the app
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
