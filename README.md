@@ -39,7 +39,7 @@
 
 - 名称：Create New Mind
 - content-left-top 是一个表单
-- 表单内容有 Title，Description，ScheduledTime，trigger 多选 checkbox，是否开启该 Mind 的 checkboc, 以及 Create Mind 按钮
+- 表单内容有 Title，Description，ScheduledTime，trigger 多选 checkbox，是否开启该 Mind 的 checkboc, 以及 Create Mind 按钮, 取消按钮（重置表单）
 - 表单提交调用 POST /api/mind 接口
 
 ### content-left-bottom
@@ -55,7 +55,7 @@
 - 名称：Mind List
 - content-right-top 是一个 table 列表，展示数据库存储的 mind，列 Title/Description/Scheduled Time/Triggers/Actions
 - 调用接口是 GET /api/mind, 每一条有 Edit 和 Delete 按钮(Actions)，Description 最多 20 长度，超出...
-- edit 按钮调用 GET /api/mind/[id] 获取数据填入 content-left-top 的表单，表单按钮变为 Update Mind, 点击后调用 PUT /api/mind/[id] 更新 mind，
+- edit 按钮调用 GET /api/mind/[id] 获取数据填入 content-left-top 的表单，表单按钮变为 Update Mind, 点击取消则回到创建 mind 的 form，点击后调用 PUT /api/mind/[id] 更新 mind，
 - 点击 delete 接口，调用 Delete /api/mind/[id] 接口，删除 mind
 
 ### ontent-right-bottom
@@ -68,11 +68,20 @@
 
 - footer 显示，"ContactMe"，指向地址 "https://www.sixmillions.cn"
 
+### scheduled
+
+- cloudflare定期触发scheduled方法
+- 取到所有mind,筛选出三个小时内到期的mind
+- 执行这些mind的trigger
+- 执行的时候记录执行日志
+- 将过期的mind的enable标记为false
+
 ### 其他说明
 
 - 调用新增更新删除按钮时，成功失败都要使用基础弹窗提示
 - 复用 css 式样/js 方法，用最简洁的 css/js 实现
 - 页面不要引入其他外部资源，使用原始 js/css 实现，调用接口使用 fetch
+- trigger里面有取消提醒链接，点击，则取消提醒，调用 /api/close/:id?token=
 
 ## dev
 

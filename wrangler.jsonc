@@ -6,7 +6,8 @@
   "compatibility_flags": ["nodejs_compat"],
   "vars": {
     "TOKEN": "6000000",
-    "CLOSE_TOKEN": "xxx"
+    "CLOSE_TOKEN": "xxx",
+    "ADVANCE_H": "3"
   },
   "kv_namespaces": [
     {
