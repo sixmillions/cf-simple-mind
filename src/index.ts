@@ -39,7 +39,7 @@ async function recordHistory(
       title: mind.title,
       executionTime: new Date().toISOString(),
       status: normalizedStatus,
-      trigger: triggerKey
+      trigger: triggerKey,
     };
 
     history.his_list.unshift(historyRecord);
@@ -50,9 +50,14 @@ async function recordHistory(
     }
 
     await env.subscribe_mind.put("history", JSON.stringify(history));
-    console.log(`History recorded for mind: ${mind.title}, trigger: ${triggerKey}, status: ${normalizedStatus}`);
+    console.log(
+      `History recorded for mind: ${mind.title}, trigger: ${triggerKey}, status: ${normalizedStatus}`
+    );
   } catch (error) {
-    console.error(`Failed to record history for mind ${mind.title}, trigger: ${triggerKey}:`, error);
+    console.error(
+      `Failed to record history for mind ${mind.title}, trigger: ${triggerKey}:`,
+      error
+    );
   }
 }
 
@@ -95,7 +100,11 @@ export default {
       // 2. 筛选出3小时内到期的 mind (使用上海时间进行比较)
       const dueMinds = Object.values(minds).filter((mind: any) => {
         const mindTime = new Date(mind.time);
-        return mind.enabled && mindTime >= shanghaiNow && mindTime <= shanghaiThreeHoursLater;
+        return (
+          mind.enabled &&
+          mindTime >= shanghaiNow &&
+          mindTime <= shanghaiThreeHoursLater
+        );
       });
 
       console.log(`Found ${dueMinds.length} minds due within 3 hours`);
@@ -133,13 +142,18 @@ export default {
                   title: typedMind.title,
                   description: typedMind.description,
                   time: typedMind.time,
-                  token: env.TOKEN,
+                  token: env.CLOSE_TOKEN,
                 });
-                console.log(`Email sent for mind: ${typedMind.title}, trigger: ${triggerKey}`);
+                console.log(
+                  `Email sent for mind: ${typedMind.title}, trigger: ${triggerKey}`
+                );
                 // 记录成功的历史记录
                 await recordHistory(env, typedMind, triggerKey, "success");
               } catch (emailError) {
-                console.error(`Failed to send email for mind ${typedMind.title}, trigger: ${triggerKey}:`, emailError);
+                console.error(
+                  `Failed to send email for mind ${typedMind.title}, trigger: ${triggerKey}:`,
+                  emailError
+                );
                 // 记录失败的历史记录
                 await recordHistory(env, typedMind, triggerKey, "fail");
               }
@@ -151,13 +165,18 @@ export default {
                   title: typedMind.title,
                   description: typedMind.description,
                   time: typedMind.time,
-                  token: env.TOKEN,
+                  token: env.CLOSE_TOKEN,
                 });
-                console.log(`DingTalk message sent for mind: ${typedMind.title}, trigger: ${triggerKey}`);
+                console.log(
+                  `DingTalk message sent for mind: ${typedMind.title}, trigger: ${triggerKey}`
+                );
                 // 记录成功的历史记录
                 await recordHistory(env, typedMind, triggerKey, "success");
               } catch (dingtalkError) {
-                console.error(`Failed to send DingTalk message for mind ${typedMind.title}, trigger: ${triggerKey}:`, dingtalkError);
+                console.error(
+                  `Failed to send DingTalk message for mind ${typedMind.title}, trigger: ${triggerKey}:`,
+                  dingtalkError
+                );
                 // 记录失败的历史记录
                 await recordHistory(env, typedMind, triggerKey, "fail");
               }

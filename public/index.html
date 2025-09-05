@@ -242,6 +242,8 @@
     th {
       background-color: var(--table-header-bg);
       font-weight: 600;
+      position: sticky;
+      top: 0;
     }
 
     /* Tabs */
@@ -404,6 +406,7 @@
             </label>
           </div>
           <button type="submit" class="btn btn-success" id="createMindBtn">Create Mind</button>
+          <button type="button" class="btn btn-warning" id="cancelMindBtn" style="margin-left: 10px;">Cancel</button>
         </form>
       </div>
 
@@ -627,7 +630,7 @@
         // Format trigger information
         let triggerInfo = 'N/A';
         if (mind.trigger && Array.isArray(mind.trigger) && mind.trigger.length > 0) {
-          triggerInfo = mind.trigger.join('/');
+          triggerInfo = mind.trigger.join('<br>');
         }
         
         const description = mind.description || '';
@@ -673,6 +676,7 @@
           const result = await response.json();
           if (result.success) {
             const mind = result.data;
+            document.querySelector('.content-left-top h2').textContent = 'Edit Mind';
             document.getElementById('title').value = mind.title;
             document.getElementById('description').value = mind.description || '';
             document.getElementById('time').value = mind.time;
@@ -970,7 +974,7 @@
     }
 
     // Load executions from API
-    async function loadExecutions() {
+    async function loadExecutions(showAlert = false) {
       if (!authToken) return;
       
       try {
@@ -984,6 +988,9 @@
           const result = await response.json();
           if (result.success) {
             renderExecutions(result.data.his_list || []);
+            if (showAlert) {
+              alert('Recent executions refreshed successfully!');
+            }
           } else {
             alert(`Error loading executions: ${result.error}`);
           }
@@ -1043,6 +1050,16 @@
       });
     }
 
+    function resetMindForm() {
+      mindForm.reset();
+      document.getElementById('enabled').checked = true;
+      currentEditingId = null;
+      document.querySelector('.content-left-top h2').textContent = 'Create New Mind';
+      document.getElementById('createMindBtn').textContent = 'Create Mind';
+      document.getElementById('createMindBtn').classList.remove('update-btn');
+      document.getElementById('createMindBtn').classList.add('create-btn');
+    }
+
     // Handle form submission
     async function handleFormSubmit(e) {
       e.preventDefault();
@@ -1099,15 +1116,7 @@
           const result = await response.json();
           if (result.success) {
             alert(`Mind ${currentEditingId ? 'updated' : 'created'} successfully`);
-            // Reset form
-            mindForm.reset();
-            document.getElementById('enabled').checked = true;
-            currentEditingId = null;
-            document.getElementById('createMindBtn').textContent = 'Create Mind';
-            document.getElementById('createMindBtn').classList.remove('update-btn');
-            document.getElementById('createMindBtn').classList.add('create-btn');
-            
-            // Reload minds
+            resetMindForm();
             loadMinds();
           } else {
             alert(`Error saving mind: ${result.error}`);
@@ -1143,9 +1152,10 @@
     confirmLoginBtn.addEventListener('click', handleLogin);
 
     mindForm.addEventListener('submit', handleFormSubmit);
+    document.getElementById('cancelMindBtn').addEventListener('click', resetMindForm);
     
     // Add event listeners for execution buttons
-    refreshExecutionsBtn.addEventListener('click', loadExecutions);
+    refreshExecutionsBtn.addEventListener('click', () => loadExecutions(true));
     clearExecutionsBtn.addEventListener('click', clearExecutions);
 
     // Initialize the app
